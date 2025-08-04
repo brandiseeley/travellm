@@ -1,4 +1,4 @@
-from retriever import retriever 
+from .retriever import retriever 
 from langgraph.graph import START, StateGraph, END
 from typing_extensions import TypedDict
 from langchain_core.documents import Document
@@ -6,7 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 from typing import List, Dict, Any
-from search_loc import search_1861_articles
+from .search_loc import search_1861_articles
 
 # Create Graph State and Retriever node
 class State(TypedDict):
