@@ -7,6 +7,20 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 from typing import List, Dict, Any
 from .search_loc import search_1861_articles
+from uuid import uuid4
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# LangSmith tracing setup
+unique_id = uuid4().hex[0:8]
+
+os.environ["LANGSMITH_TRACING"] = "true"
+os.environ["LANGCHAIN_TRACING_v2"] = "true"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com/"
+os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com/"
+os.environ["LANGSMITH_PROJECT"] = f"LangSmith - {unique_id}"
 
 # Create Graph State and Retriever node
 class State(TypedDict):
