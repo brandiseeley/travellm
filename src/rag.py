@@ -1,25 +1,95 @@
 from retriever import retriever 
-from langgraph.graph import START, StateGraph
+from langgraph.graph import START, StateGraph, END
 from typing_extensions import TypedDict
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
+from typing import List, Dict, Any
+from search_loc import search_1861_articles
 
 # Create Graph State and Retriever node
 class State(TypedDict):
-  question: str
-  context: list[Document]
-  response: str
+    question: str
+    local_context: list[Document]
+    loc_context: list[Document]
+    context: list[Document]
+    response: str
 
-def retrieve(state: State) -> State:
-  retrieved_docs = retriever.invoke(state["question"])
-  return {"context" : retrieved_docs}
+def retrieve_local(state: State) -> State:
+    """Retrieve documents from local vector store"""
+    retrieved_docs = retriever.invoke(state["question"])
+    return {"local_context": retrieved_docs}
+
+def search_loc_with_llm(state: State) -> State:
+    """Use LLM with function calling to decide how to search LOC"""
+    from langchain_core.tools import tool
+    from langchain_openai import ChatOpenAI
+    
+    @tool
+    def search_1861_articles_tool(query: list[str], state: str = None, max_results: int = 5) -> List[Dict[str, Any]]:
+        """Search for 1861 articles from Library of Congress. Use this to find additional historical context."""
+        return search_1861_articles(query, state, max_results)
+    
+    # Create LLM with function calling
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    
+    # Create prompt for the LLM to decide search parameters
+    search_prompt = ChatPromptTemplate.from_messages([
+        ("system", """You are helping to search for historical newspaper articles from 1861. 
+        Based on the user's question and the local search results, decide how to search the Library of Congress.
+        
+        Use the search_1861_articles_tool to find relevant articles. Choose search terms that will help answer the question.
+        Focus on key nouns, people, places, events, or concepts mentioned in the question."""),
+        ("human", "Question: {question}\nLocal results found: {local_count}\n\nSearch for additional articles to help answer this question.")
+    ])
+    
+    # Get search parameters from LLM
+    search_chain = search_prompt | llm.bind_tools([search_1861_articles_tool])
+    search_response = search_chain.invoke({
+        "question": state["question"],
+        "local_count": len(state["local_context"])
+    })
+    
+    # Extract and execute the tool call
+    tool_calls = search_response.tool_calls
+    loc_results = []
+    
+    if tool_calls:
+        for tool_call in tool_calls:
+            if tool_call["name"] == "search_1861_articles_tool":
+                args = tool_call["args"]
+                results = search_1861_articles_tool.invoke(args)
+                loc_results.extend(results)
+    
+    # Convert LOC results to Document format
+    loc_docs = []
+    for article in loc_results:
+        content = f"Title: {article.get('title', 'Unknown')}\n"
+        content += f"Date: {article.get('date', 'Unknown')}\n"
+        content += f"Description: {article.get('description', 'No description available')}\n"
+        content += f"URL: {article.get('url', 'No URL available')}"
+        
+        doc = Document(
+            page_content=content,
+            metadata={
+                "source": "Library of Congress",
+                "title": article.get('title', 'Unknown'),
+                "date": article.get('date', 'Unknown'),
+                "url": article.get('url', 'No URL available')
+            }
+        )
+        loc_docs.append(doc)
+    
+    return {"loc_context": loc_docs}
 
 # Create the ChatPromptTemplate
 HUMAN_TEMPLATE = """
-# CONTEXT:
-{context}
+# LOCAL NEWSPAPER ARTICLES:
+{local_context}
+
+# LIBRARY OF CONGRESS ARTICLES:
+{loc_context}
 
 # QUERY:
 {query}
@@ -49,14 +119,18 @@ openai_chat_model = ChatOpenAI(model="gpt-4o-mini")
 generator_chain = chat_prompt | openai_chat_model | StrOutputParser()
 
 def generate(state: State) -> State:
-  generator_chain = chat_prompt | openai_chat_model | StrOutputParser()
-  response = generator_chain.invoke({"query" : state["question"], "context" : state["context"]})
-  return {"response" : response}
+    response = generator_chain.invoke({
+        "query": state["question"], 
+        "local_context": state["local_context"],
+        "loc_context": state["loc_context"]
+    })
+    return {"response": response}
 
 # Build our graph
 graph_builder = StateGraph(State)
-graph_builder = graph_builder.add_sequence([retrieve, generate])
-graph_builder.add_edge(START, "retrieve")
+graph_builder = graph_builder.add_sequence([retrieve_local, search_loc_with_llm, generate])
+graph_builder.add_edge(START, "retrieve_local")
 graph = graph_builder.compile()
 
-print(graph.invoke({"question" : "How can I combat a fever?"})["response"])
+if __name__ == "__main__":
+    print(graph.invoke({"question" : "How can I combat a fever?"})["response"])
