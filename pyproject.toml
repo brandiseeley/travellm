@@ -17,11 +17,14 @@ langchain-openai = "^0.3.28"
 langgraph = "^0.6.3"
 psycopg2-binary = "^2.9.9"
 openai = "^1.12.0"
+ragas = "^0.2.0"
 python-dotenv = "^1.0.0"
 psycopg2 = "^2.9.10"
 langchain-postgres = "^0.0.15"
 flask = "^3.0.0"
 langsmith = "^0.3.45"
+rapidfuzz = "^3.13.0"
+langchain-core = "^0.3.72"
 
 
 [tool.poetry.group.dev.dependencies]
