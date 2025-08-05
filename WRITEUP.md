@@ -1,5 +1,7 @@
 # Time Travel LLM Project Writeup
 
+📹 Loom Video recording: https://www.loom.com/share/38ef280e48014ccc940c6c994e802573?sid=9dc9dd41-ae0a-4059-9e75-156f6cb118e0
+
 ## Task 1: Defining your Problem and Audience
 
 ### Problem Description

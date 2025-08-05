@@ -1,5 +1,7 @@
 # Time Travel LLM - 1861
 
+> Note: For submission writeup and loom video, see `WRITEUP.md`!
+
 A simple RAG system that answers questions as if you're talking to someone from 1861, using historical newspaper articles.
 
 ### Installing Dependencies & API Setup
