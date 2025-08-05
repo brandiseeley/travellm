@@ -3,11 +3,12 @@
 ## Task 1: Defining your Problem and Audience
 
 ### Problem Description
-Educators and content creators struggle to access and understand authentic historical perspectives from specific time periods because they lack a conversational interface that can provide contextually accurate responses based on historical newspaper articles and primary sources from those eras.
+
+✅ Educators and content creators struggle to access and understand authentic historical perspectives from specific time periods because they lack a conversational interface that can provide contextually accurate responses based on historical newspaper articles and primary sources from those eras.
 
 ### Why This is a Problem for Your Specific User
 
-The primary users of this system are educators and content creators who need to engage their audiences with authentic historical perspectives. Teachers seeking to bring history to life for their students, content creators looking to tell compelling stories from the past, and educational content developers all face significant barriers when trying to access historical viewpoints. Currently, they must manually search through digitized newspaper archives, read through dense historical texts, and piece together context from multiple sources - a time-consuming and often overwhelming process that requires significant historical research expertise.
+✅ The primary users of this system are educators and content creators who need to engage their audiences with authentic historical perspectives. Teachers seeking to bring history to life for their students, content creators looking to tell compelling stories from the past, and educational content developers all face significant barriers when trying to access historical viewpoints. Currently, they must manually search through digitized newspaper archives, read through dense historical texts, and piece together context from multiple sources - a time-consuming and often overwhelming process that requires significant historical research expertise.
 
 This problem is particularly acute because understanding how people thought about and discussed events in their own time is crucial for creating engaging, accurate historical content. Traditional search engines and modern AI systems provide contemporary perspectives rather than authentic historical viewpoints, making it difficult for educators and creators to truly "step back in time" and experience the world as it was understood in different historical periods. The Time Travel LLM solves this by creating an immersive, conversational experience that responds as someone from a specific historical era would, using actual historical sources as the foundation for its responses. 
 
@@ -15,11 +16,11 @@ This problem is particularly acute because understanding how people thought abou
 
 ### Proposed Solution
 
-The Time Travel LLM creates an immersive conversational interface that allows users to interact with historical perspectives from any time period. Users simply type questions into a clean, intuitive web interface, and the system responds as someone from that historical era would, using authentic language, knowledge, and viewpoints from the time. The experience feels like having a conversation with a knowledgeable person from the past who can discuss current events, medical practices, social customs, and daily life as they were understood in that period.
+✅ The Time Travel LLM creates an immersive conversational interface that allows users to interact with historical perspectives from any time period. Users simply type questions into a clean, intuitive web interface, and the system responds as someone from that historical era would, using authentic language, knowledge, and viewpoints from the time. The experience feels like having a conversation with a knowledgeable person from the past who can discuss current events, medical practices, social customs, and daily life as they were understood in that period.
 
 The system works by combining a retrieval-augmented generation (RAG) approach with historical newspaper articles and primary sources. When a user asks a question, the system intelligently searches through digitized historical documents to find relevant context, then generates responses that reflect the authentic voice and knowledge of people from that era. The interface is designed to be simple and accessible - just a question input and response area - but the underlying system provides rich, contextually accurate historical perspectives that educators and content creators can use to bring history to life.
 
-### Tooling Choices
+### ✅ Tooling Choices
 
 **LLM**: OpenAI GPT-4 for generating historically accurate responses, chosen for its strong reasoning capabilities and ability to adopt different personas and writing styles.
 
@@ -43,7 +44,7 @@ The system uses agentic reasoning primarily for intelligent document retrieval w
 
 ## Task 3: Dealing with the Data
 
-### Data Sources and External APIs
+### ✅ Data Sources and External APIs
 
 **Primary Historical Data**: The system uses the American Stories dataset from Harvard, specifically articles from 1861, which provides digitized newspaper articles with rich metadata including newspaper names, dates, and full article text. This serves as the core knowledge base for generating authentic 1861-era responses. Other dates could certainly be used, but 1861 has been chosen for simplicity in protoyping, and a rich, tumultuous time in history.
 
@@ -51,17 +52,17 @@ The system uses agentic reasoning primarily for intelligent document retrieval w
 
 **OpenAI APIs**: The system uses OpenAI's text-embedding-3-small model for creating vector representations of historical documents and GPT-4 for generating responses, enabling semantic search and contextually appropriate historical dialogue.
 
-### Default Chunking Strategy
+### ✅ Default Chunking Strategy
 
 The system uses a `RecursiveCharacterTextSplitter` with a chunk size of 750 tokens and no overlap between chunks. This decision was made mostly to provide a starting point before investigating other strategies. Having an end-to-end application working to be able to make decisions based on evaluations was important to me.
 
 ## Task 4: Building a Quick End-to-End Agentic RAG Prototype
 
-See `README.md` for instructions on running application locally.
+✅ See `README.md` for instructions on running application locally.
 
 ## Task 5: Creating a Golden Test Data Set
 
-- Golden test set with 50 examples can be found in `data/sythetic_dataset.json`
+- ✅ Golden test set with 50 examples can be found in `data/sythetic_dataset.json`
 
 ### Results
 
@@ -124,14 +125,14 @@ See `README.md` for instructions on running application locally.
 
 </details>
 
-Averages:
+✅ Averages:
 
 - `faithfulness`: 0.639073783
 - `answer_relevancy`: 0.2159191042
 - `llm_context_precision_with_reference`: 0.7718409586
 - `context_recall`: 0.6846405229
 
-### Performance Analysis:
+### ✅ Performance Analysis:
 
 - Faithfulness (0.64): The pipeline shows moderate faithfulness, meaning generated answers are reasonably aligned with the retrieved context, though there's room for improvement in ensuring responses strictly adhere to source material.
 - Answer Relevancy (0.22): This low score indicates a significant weakness - the system often generates answers that don't directly address the user's questions, suggesting the retrieval or answer generation components need refinement.
@@ -142,13 +143,13 @@ Overall Assessment: The system is good at finding relevant information but falls
 
 ## Task 6: The Benefits of Advanced Retrieval
 
-1. I intent to try a Multi-query retriever. Because the phrasing in historical docs can be quite different from modern language, rephrasing the query in several ways should help capture relevant docs.
+1. ✅ I intent to try a Multi-query retriever. Because the phrasing in historical docs can be quite different from modern language, rephrasing the query in several ways should help capture relevant docs.
 
-2. I also plan to experiment with an ensemble retriever that combines the multi-query retriever with BM25. While BM25 alone may not be sufficient, integrating it with the multi-query approach could strike a good balance—retrieving semantically relevant documents while still capturing exact-match keywords like proper nouns, which may not be well-represented in embeddings.
+2. ✅ I also plan to experiment with an ensemble retriever that combines the multi-query retriever with BM25. While BM25 alone may not be sufficient, integrating it with the multi-query approach could strike a good balance—retrieving semantically relevant documents while still capturing exact-match keywords like proper nouns, which may not be well-represented in embeddings.
 
 ## Task 7: Assessing Performance
 
-| Metric                            | Baseline       | Multi-Query Retriever  | Ensemble Retriever  |
+| ✅ Metric                         | Baseline       | Multi-Query Retriever  | Ensemble Retriever  |
 |-----------------------------------|----------------|------------------------|---------------------|
 | Faithfulness                      | 0.639073783    | 0.6779925866           | 0.6682036381        |
 | Answer Relevancy                  | 0.2159191042   | 0.2133997587           | 0.2130546932        |
@@ -161,10 +162,10 @@ My intuition is that we actually have a misalignment between how our synthetic d
 
 ### Expected Changes
 
-1. This prototype is only embedding documents from one year, 1861. To be truly useful, I'll need to allow users to interact with a wide range of dates, either by selecting them explicitly or implying in their query.
+1. ✅ This prototype is only embedding documents from one year, 1861. To be truly useful, I'll need to allow users to interact with a wide range of dates, either by selecting them explicitly or implying in their query.
 
-2. Creating a more complex workflow using agentic reasoning could improve the user experience. For example, a user may ask a query that is general and spans many different times, like "How has the treatement of the flu evolved?" vs a single-time period question like "What did they know about germs in 1900?" Using an agentic query router could mean more intuitive responses that match what a given user is looking for.
+2. ✅ Creating a more complex workflow using agentic reasoning could improve the user experience. For example, a user may ask a query that is general and spans many different times, like "How has the treatement of the flu evolved?" vs a single-time period question like "What did they know about germs in 1900?" Using an agentic query router could mean more intuitive responses that match what a given user is looking for.
 
-3. Better evaluation of useful external APIs. It's not obvious to me that my external API is adding any value, especially compared to the extra latency. I would like to explore useful APIs, but they need to be solving a clear problem that currently isn't being addressed.
+3. ✅ Better evaluation of useful external APIs. It's not obvious to me that my external API is adding any value, especially compared to the extra latency. I would like to explore useful APIs, but they need to be solving a clear problem that currently isn't being addressed.
 
-4. Make an interface that isn't horrible 😅
+4. ✅ Make an interface that isn't horrible 😅
