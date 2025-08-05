@@ -1,4 +1,6 @@
-from .retriever import retriever 
+from .retriever import retriever
+from .multiquery_retriever import multiquery_retriever
+from .ensemble_retriever import ensemble_retriever
 from langgraph.graph import START, StateGraph, END
 from typing_extensions import TypedDict
 from langchain_core.documents import Document
@@ -32,7 +34,9 @@ class State(TypedDict):
 
 def retrieve_local(state: State) -> State:
     """Retrieve documents from local vector store"""
-    retrieved_docs = retriever.invoke(state["question"])
+    # retrieved_docs = retriever.invoke(state["question"]) # Uncomment this for basic retrieval
+    # retrieved_docs = multiquery_retriever.invoke(state["question"]) # Uncomment this for multi-query retrieval
+    retrieved_docs = ensemble_retriever.invoke(state["question"]) # Uncomment this for ensemble retrieval
     return {"local_context": retrieved_docs}
 
 def search_loc_with_llm(state: State) -> State:

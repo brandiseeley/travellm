@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
 # Load the articles from the directory using the same approach as embed_articles.py
-path = "../data/articles_1861_sample"
+PATH = "../data/articles_1861_sample"
 
 def metadata_func(record, metadata):
     metadata["newspaper_name"] = record.get("newspaper_name")
@@ -23,7 +23,7 @@ def metadata_func(record, metadata):
     return metadata
 
 directory_loader = DirectoryLoader(
-    path,
+    PATH,
     glob="*.json",
     loader_cls=JSONLoader,
     loader_kwargs={
@@ -44,7 +44,7 @@ generator = TestsetGenerator(llm=generator_llm, embedding_model=generator_embedd
 
 # Generate synthetic dataset
 print("Generating synthetic dataset...")
-dataset = generator.generate_with_langchain_docs(article_resources[:20], testset_size=5)
+dataset = generator.generate_with_langchain_docs(article_resources, testset_size=50)
 
 # Save the dataset as JSON
 import pandas as pd

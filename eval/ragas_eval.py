@@ -35,13 +35,14 @@ def create_evaluation_dataset(synthetic_data: list) -> list:
             "contexts": item["reference_contexts"],
         }
         eval_dataset.append(eval_sample)
-        break  # TODO: Remove this break for full evaluation
     return eval_dataset
 
 
 def process_responses(eval_dataset: list) -> list:
     """Process RAG responses for each evaluation sample."""
-    for test_row in eval_dataset:
+    print("Processing responses...")
+    total = len(eval_dataset)
+    for i, test_row in enumerate(eval_dataset, 1):
         response = graph.invoke({"question": test_row["question"]})
         test_row["response"] = response["response"]
         test_row["retrieved_contexts"] = [
@@ -49,6 +50,8 @@ def process_responses(eval_dataset: list) -> list:
         ]
         test_row["user_input"] = test_row["question"]
         test_row["reference"] = test_row["ground_truth"]
+        if i % 5 == 0:
+            print(f"Ran {i}/{total}...")
     return eval_dataset
 
 

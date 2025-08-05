@@ -25,6 +25,7 @@ flask = "^3.0.0"
 langsmith = "^0.3.45"
 rapidfuzz = "^3.13.0"
 langchain-core = "^0.3.72"
+rank-bm25 = "^0.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
