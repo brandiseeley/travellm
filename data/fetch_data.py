@@ -3,13 +3,16 @@ import json
 
 from datasets import load_dataset
 
+YEAR = "1861"
+MAX_ARTICLES = 1000
+
 #  Download data for the year 1861 at the associated article level (Default)
 dataset = load_dataset("dell-research-harvard/AmericanStories",
     "subset_years",
-    year_list=["1861"]
+    year_list=[YEAR]
 )
 
-articles = dataset['1861']
+articles = dataset[YEAR]
 
 def save_articles_to_directory(articles, output_dir="data/articles_1861", max_articles=None):
     """Save articles to individual JSON files in the specified directory."""
@@ -27,4 +30,4 @@ def save_articles_to_directory(articles, output_dir="data/articles_1861", max_ar
     print(f"Saved {len(articles) if max_articles is None else max_articles} articles to {output_dir}")
 
 # Save all articles to directory
-save_articles_to_directory(articles, output_dir="data/articles_1861_sample", max_articles=50)
+save_articles_to_directory(articles, output_dir=f"data/articles_{YEAR}_sample", max_articles=MAX_ARTICLES)

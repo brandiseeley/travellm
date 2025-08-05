@@ -10,7 +10,7 @@ from langchain_postgres import PGVector
 from langchain_openai import OpenAIEmbeddings
 
 # Load the articles from the directory
-path = "../data/articles_1861_sample"
+PATH = "../data/articles_1861_sample"
 
 def metadata_func(record, metadata):
     metadata["newspaper_name"] = record.get("newspaper_name")
@@ -19,7 +19,7 @@ def metadata_func(record, metadata):
     return metadata
 
 directory_loader = DirectoryLoader(
-    path,
+    PATH,
     glob="*.json",
     loader_cls=JSONLoader,
     loader_kwargs={
